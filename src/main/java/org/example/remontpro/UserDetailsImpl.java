@@ -2,6 +2,7 @@ package org.example.remontpro;
 
 import org.example.remontpro.models.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getEmail(),
                 user.getPassword(),
                 true, // или user.isActive(), если есть такое поле
-                Collections.emptyList() // или преобразуйте роли пользователя в GrantedAuthority
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))// или преобразуйте роли пользователя в GrantedAuthority
         );
     }
 

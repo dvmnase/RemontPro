@@ -2,6 +2,7 @@ package org.example.remontpro.controllers;
 
 
 import org.example.remontpro.JwtCore;
+import org.example.remontpro.models.Role;
 import org.example.remontpro.models.User;
 import org.example.remontpro.repositories.UserRepository;
 import org.example.remontpro.requests.SigninRequest;
@@ -54,19 +55,32 @@ public class SecurityController {
 
 
     @PostMapping("/signup")
-    ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
-        if (userRepository.existsByUsername(signupRequest.getUsername())){
-           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already exists");
-       }
-       if (userRepository.existsByEmail(signupRequest.getEmail())){
-           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
-       }
-       User user = new User();
-       user.setUsername(signupRequest.getUsername());
-       user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-       user.setEmail( signupRequest.getEmail());
-       userRepository.save(user);
-       return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
+        try {
+            if (userRepository.existsByUsername(signupRequest.getUsername())) {
+                return ResponseEntity.badRequest().body("Username already exists");
+            }
+            if (userRepository.existsByEmail(signupRequest.getEmail())) {
+                return ResponseEntity.badRequest().body("Email already exists");
+            }
+
+            User user = new User();
+            user.setUsername(signupRequest.getUsername());
+            user.setEmail(signupRequest.getEmail());
+            user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+
+            // Обработка роли с проверкой
+            try {
+                user.setRole(Role.valueOf(signupRequest.getRole().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body("Invalid role. Available roles: ADMIN, USER, EMPLOYEE");
+            }
+
+            userRepository.save(user);
+            return ResponseEntity.ok("User registered successfully");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Registration failed: " + e.getMessage());
+        }
     }
     @PostMapping("/signin")
     ResponseEntity<?> signin(@RequestBody SigninRequest signinRequest) {
