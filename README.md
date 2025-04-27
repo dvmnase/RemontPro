@@ -1,5 +1,9 @@
 # RemontPro
-backend, Java, Spring, Rest, JPA
+backend, Java, Spring, Rest, JPA, Dockerfile
+
+Dockerfile (in the terminal)
+docker build -t backend .
+docker run -p 8080:8080 backend
 
 registration POST http://localhost:8080/auth/signup
 example JSON
