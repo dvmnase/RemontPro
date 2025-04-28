@@ -72,7 +72,10 @@ public class SecurityConfigurator {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/secured/admin/**").hasRole("ADMIN")
                         .requestMatchers("/secured/employee/**").hasAnyRole("EMPLOYEE", "ADMIN")
-                        .anyRequest().permitAll())
+                        .requestMatchers("/secured/**").authenticated()  // <--- добавляем это!
+                        .anyRequest().authenticated()                    // <--- и это!
+                )
+
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
