@@ -1,5 +1,6 @@
 package org.example.remontpro.configurations;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.remontpro.TokenFilter;
 import org.example.remontpro.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,20 +65,21 @@ public class SecurityConfigurator {
                     config.setAllowedHeaders(List.of("*"));
                     return config;
                 }))
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/secured/admin/**").hasRole("ADMIN")
                         .requestMatchers("/secured/employee/**").hasAnyRole("EMPLOYEE", "ADMIN")
-                        .requestMatchers("/secured/**").authenticated()  // <--- добавляем это!
-                        .anyRequest().authenticated()                    // <--- и это!
+                        .requestMatchers("/secured/**").authenticated()
+                        .anyRequest().permitAll()
                 )
-
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
+
 }
