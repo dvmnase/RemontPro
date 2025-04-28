@@ -14,7 +14,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
 @Component
 public class TokenFilter extends OncePerRequestFilter {
 
@@ -32,11 +31,8 @@ public class TokenFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         logger.info("Incoming request to: " + request.getRequestURI());
 
-
         try {
             String jwt = parseJwt(request);
-            logger.debug("Extracted JWT: " + jwt);
-
             if (jwt != null && jwtCore.validateToken(jwt)) {
                 String username = jwtCore.getNameFromJwt(jwt);
                 logger.debug("Authenticating user: " + username);
@@ -50,29 +46,23 @@ public class TokenFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 logger.info("Authenticated user: " + username);
-            } else {
-                logger.warn("JWT validation failed or no token provided");
             }
-        } catch (Exception e) {
-            logger.error("Authentication error: " + e.getMessage(), e);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid token or authentication failed");
-            response.getWriter().flush();
-            return;
+        } catch (ExpiredJwtException e) {
+            logger.error("Token expired: " + e.getMessage());
+            // Не прерываем цепочку, просто не аутентифицируем пользователя
+        } catch (io.jsonwebtoken.SignatureException | io.jsonwebtoken.MalformedJwtException e) {
+            logger.error("Invalid token signature or structure: " + e.getMessage());
+            // Не прерываем цепочку, просто не аутентифицируем пользователя
         }
-
-        logger.info("Passing request down the filter chain...");
 
         filterChain.doFilter(request, response);
     }
 
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
-
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);
         }
-
         return null;
     }
 }
