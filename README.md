@@ -94,4 +94,31 @@ docker run -p 8080:8080 backend
 **POST** (block client by id)  `http://localhost:8080/secured/admin/users/clients/{id}/block`
 **POST** (unblock client by id)  `http://localhost:8080/secured/admin/users/clients/{id}/unblock`
 
+#### Viewing statistics (Require Bearer Token)
+**GET** (get all employees with their statistics)    `http://localhost:8080/admin/stats/employees`  
+**GET**  (get employee by id with his statistics)  `http://localhost:8080/admin/stats/employees/{id}`  
+```json
+{
+    "id": 5,
+    "fullName": "Иван Новичок",
+    "qualification": "штукатур",
+    "phoneNumber": "+375295554483",
+    "userId": 15,
+    "username": "lol118",
+    "email": "lo111l@example.com",
+    "newOrders": 0,
+    "inProgressOrders": 1,
+    "completedOrders": 1,
+    "cancelledOrders": 0
+}
+```
+**GET** (get general statistics)  `http://localhost:8080/admin/stats/orders-by-status`
+```json
+{
+    "IN_PROGRESS": 2,
+    "NEW": 2,
+    "CANCELLED": 1,
+    "COMPLETED": 1
+}
+
 ```
