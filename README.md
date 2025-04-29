@@ -44,7 +44,8 @@ docker run -p 8080:8080 backend
 **GET** `http://localhost:8080/secured/user`  
 **Auth Type**: Bearer Token 
 
-### CRUD Operations with services (Require Bearer Token)
+###ADMIN
+#### CRUD Operations with services (Require Bearer Token)
 **GET**    `http://localhost:8080/secured/admin/services`  
 **GET**    `http://localhost:8080/secured/admin/services/{id}`  
 **POST**   `http://localhost:8080/secured/admin/services`
@@ -59,5 +60,32 @@ docker run -p 8080:8080 backend
 
 **PUT**    `http://localhost:8080/secured/admin/services/{id}`  
 **DELETE** `http://localhost:8080/secured/admin/services/{id}`
+
+#### CRUD Operations with employees (Require Bearer Token)
+**GET**    `http://localhost:8080/secured/admin/employees`  
+**GET**    `http://localhost:8080/secured/admin/employees/{id}`  
+**POST**   `http://localhost:8080/secured/admin/employees`
+
+```json
+{
+  "username": "lol118",
+  "email": "lo111",
+  "password": "123",
+  "fullName": "Иван Новичок",
+  "qualification": "штукатур",
+  "phoneNumber": "number"
+}
+```
+
+**PUT**    `http://localhost:8080/secured/admin/employees/{id}`  
+```json
+ {
+  "fullName": "Данечка Петров",
+  "qualification": "сантехник",
+  "phoneNumber": "number"
+}
+
+```
+**DELETE** `http://localhost:8080/secured/admin/employees/{id}`
 ```
 
