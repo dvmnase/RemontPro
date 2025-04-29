@@ -131,4 +131,18 @@ docker run -p 8080:8080 backend
 #### FILTER SERVICES by price (Require Bearer Token)
 **GET** (get all services what price <=150)   `http://localhost:8080/user/services/filter?maxPrice=150`  
 
+#### order management (Require Bearer Token)
+**GET** (get history for client)   `http://localhost:8080/user/orders/history/{clientId}`  
+**GET** (get order by id)   `http://localhost:8080/user/orders/{orderId}`  
+**GET** (get employees)   `http://localhost:8080/user/orders/employees`  
+**POST** (add order)   `http://localhost:8080/user/orders`  
+```json
+{
+  "clientId": 1,
+  "serviceId": 1,
+  "employeeId": 1,
+  "description": "Хочу заменить унитаз",
+  "status": "NEW"
+}
 ```
+**POST** (delete order if status is new)   `http://localhost:8080/user/orders/{orderId}/cancel?clientId={clientId}`  
