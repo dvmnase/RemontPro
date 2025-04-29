@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.example.remontpro.models.User;
 
+import java.util.List;
+
 @Entity
 @Table(name = "employees")
 @Data
@@ -61,4 +63,16 @@ public class Employee {
     private String qualification;
 
     private String phoneNumber;
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    @OneToMany(mappedBy = "employee")
+    private List<Order> orders;
+
 }
