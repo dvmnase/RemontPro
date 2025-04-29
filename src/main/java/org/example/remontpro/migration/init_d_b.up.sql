@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS clients (
     full_name VARCHAR(255) NOT NULL,
     phone_number VARCHAR(20),
     address VARCHAR(500),
+    is_blocked BOOLEAN DEFAULT FALSE;
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
