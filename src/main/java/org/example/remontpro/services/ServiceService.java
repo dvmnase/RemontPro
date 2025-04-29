@@ -6,6 +6,7 @@ import org.example.remontpro.repositories.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +46,14 @@ public class ServiceService {
         ServiceEntity existingService = serviceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found with id: " + id));
         serviceRepository.delete(existingService);
+    }
+
+    public List<ServiceEntity> searchServices(String query) {
+        return serviceRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
+    }
+
+    public List<ServiceEntity> filterByMaxPrice(BigDecimal maxPrice) {
+        return serviceRepository.findByPriceLessThanEqual(maxPrice);
     }
 
 }
