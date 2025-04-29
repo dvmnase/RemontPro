@@ -122,3 +122,13 @@ docker run -p 8080:8080 backend
 }
 
 ```
+### USER
+#### SEARCH SERVICES (Require Bearer Token)
+**GET** (get all)   `http://localhost:8080/user/services`  
+**GET**  (get service by id)  `http://localhost:8080/user/services/3`  
+**GET**  (search service)  `http://localhost:8080/user/services/search?query=ремонт`
+
+#### FILTER SERVICES by price (Require Bearer Token)
+**GET** (get all services what price <=150)   `http://localhost:8080/user/services/filter?maxPrice=150`  
+
+```
