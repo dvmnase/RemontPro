@@ -44,7 +44,7 @@ docker run -p 8080:8080 backend
 **GET** `http://localhost:8080/secured/user`  
 **Auth Type**: Bearer Token 
 
-###ADMIN
+### ADMIN
 #### CRUD Operations with services (Require Bearer Token)
 **GET**    `http://localhost:8080/secured/admin/services`  
 **GET**    `http://localhost:8080/secured/admin/services/{id}`  
@@ -87,5 +87,11 @@ docker run -p 8080:8080 backend
 
 ```
 **DELETE** `http://localhost:8080/secured/admin/employees/{id}`
-```
 
+#### Block/unblock clients (Require Bearer Token)
+**GET** (get all users)    `http://localhost:8080/secured/admin/users`  
+**GET**  (get all clients)  `http://localhost:8080/secured/admin/users/clients`  
+**POST** (block client by id)  `http://localhost:8080/secured/admin/users/clients/{id}/block`
+**POST** (unblock client by id)  `http://localhost:8080/secured/admin/users/clients/{id}/unblock`
+
+```
