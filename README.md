@@ -23,10 +23,14 @@ docker run -p 8080:8080 backend
 
 ```json
 {
-    "username": "qwerty",
-    "email": "qwerty@example.com",
-    "password": "sdfghj",
-    "role": "ADMIN"
+  "username": "ddd2d",
+  "email": "d2ddd",
+  "password": "123",
+  "fullName": "ДИМИР Новичок",
+  "qualification": "штукатур",
+  "role": "user",
+  "phoneNumber": "number",
+  "address": "улица дом там"
 }
 ```
 
