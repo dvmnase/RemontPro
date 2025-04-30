@@ -73,6 +73,25 @@ public class OrderDetailsDto {
     }
 
     private Long orderId;
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    private Long serviceId;
+    private Long employeeId;
     private String serviceName;
     private Double servicePrice;
     private String employeeName;

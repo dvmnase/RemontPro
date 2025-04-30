@@ -81,10 +81,12 @@ public class OrderService {
         ServiceEntity service = serviceRepository.findById(order.getServiceId()).orElse(null);
         dto.setServiceName(service != null ? service.getName() : "Unknown");
         dto.setServicePrice(service != null ? service.getPrice() : null);
+        dto.setServiceId(service.getId());
 
         Employee employee = order.getEmployee();
         dto.setEmployeeName(employee != null ? employee.getFullName() : "Not assigned");
         dto.setEmployeePhone(employee != null ? employee.getPhoneNumber() : null);
+        dto.setEmployeeId(employee != null ? employee.getId() : null);
 
         dto.setStatus(order.getStatus());
         dto.setDescription(order.getDescription());
