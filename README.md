@@ -146,3 +146,8 @@ docker run -p 8080:8080 backend
 }
 ```
 **POST** (delete order if status is new)   `http://localhost:8080/user/orders/{orderId}/cancel?clientId={clientId}`  
+
+#### review management (Require Bearer Token)
+**GET** (get reviews for service)   `http://localhost:8080/user/reviews/service/{serviceId}`  
+**POST** (add review)   `http://localhost:8080/user/reviews?clientId=1&orderId=7&rating=4&comment=супер`  
+
