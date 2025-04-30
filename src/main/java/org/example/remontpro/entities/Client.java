@@ -63,9 +63,12 @@ public class Client {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
+    @Column(name = "full_name", nullable = false)
     private String fullName;
+    @Column(name = "phone_number")
     private String phoneNumber;
+    @Column(name = "address")
     private String address;
+    @Column(name = "is_blocked", nullable = false)
     private Boolean isBlocked = false;
 }

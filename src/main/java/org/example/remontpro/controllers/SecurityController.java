@@ -3,8 +3,11 @@ package org.example.remontpro.controllers;
 
 import org.example.remontpro.JwtCore;
 import org.example.remontpro.UserDetailsImpl;
+import org.example.remontpro.entities.Client;
 import org.example.remontpro.models.Role;
 import org.example.remontpro.models.User;
+import org.example.remontpro.repositories.ClientRepository;
+import org.example.remontpro.repositories.EmployeeRepository;
 import org.example.remontpro.repositories.UserRepository;
 import org.example.remontpro.requests.SigninRequest;
 import org.example.remontpro.requests.SignupRequest;
@@ -30,7 +33,11 @@ public class SecurityController {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
+    private ClientRepository clientRepository;
+    private EmployeeRepository employeeRepository;
     private JwtCore jwtCore;
+
+
 
 
    @Autowired
@@ -39,6 +46,15 @@ public class SecurityController {
     }
 
 
+
+@Autowired
+public void setClientRepository(ClientRepository clientRepository) {
+       this.clientRepository = clientRepository;
+}
+    @Autowired
+    public void setEmployeeRepository(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
@@ -67,30 +83,34 @@ public class SecurityController {
                 return ResponseEntity.badRequest().body("Email already exists");
             }
 
+            // создаем пользователя с ролью USER
             User user = new User();
             user.setUsername(signupRequest.getUsername());
             user.setEmail(signupRequest.getEmail());
             user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+            user.setRole(Role.USER);
+            user = userRepository.save(user);
 
-            // Обработка роли с проверкой
-            try {
-                user.setRole(Role.valueOf(signupRequest.getRole().toUpperCase()));
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.badRequest().body("Invalid role. Available roles: ADMIN, USER, EMPLOYEE");
-            }
+            // создаем клиента, привязываем к пользователю
+            Client client = new Client();
+            client.setUser(user);
+            client.setFullName(signupRequest.getFullName());
+            client.setPhoneNumber(signupRequest.getPhoneNumber());
+            client.setAddress(signupRequest.getAddress());
+            clientRepository.save(client);
 
-            userRepository.save(user);
-            return ResponseEntity.ok("User registered successfully");
+            return ResponseEntity.ok("Client registered successfully");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Registration failed: " + e.getMessage());
         }
     }
     @PostMapping("/signin")
-    ResponseEntity<?> signin(@RequestBody SigninRequest signinRequest) {
-        Authentication authentication = null;
+    public ResponseEntity<AuthResponse> signin(@RequestBody SigninRequest signinRequest) {
+        Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(signinRequest.getUsername(), signinRequest.getPassword()));
+                    new UsernamePasswordAuthenticationToken(
+                            signinRequest.getUsername(), signinRequest.getPassword()));
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -98,7 +118,6 @@ public class SecurityController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtCore.generateToken(authentication);
 
-        // Получаем роль пользователя из аутентификации
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String role = userDetails.getAuthorities().stream()
                 .findFirst()
@@ -106,7 +125,22 @@ public class SecurityController {
                 .orElse("ROLE_USER")
                 .replace("ROLE_", "");
 
-        return ResponseEntity.ok(new AuthResponse(jwt, role));
+        Long userId = userDetails.getId();
+
+        return switch (role) {
+            case "USER" -> clientRepository.findByUserId(userId)
+                    .map(client -> ResponseEntity.ok(new AuthResponse(jwt, role, client)))
+                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AuthResponse(jwt, role, null)));
+
+            case "EMPLOYEE" -> employeeRepository.findByUserId(userId)
+                    .map(employee -> ResponseEntity.ok(new AuthResponse(jwt, role, employee)))
+                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AuthResponse(jwt, role, null)));
+
+            case "ADMIN" -> ResponseEntity.ok(new AuthResponse(jwt, role, null));
+
+            default -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AuthResponse(jwt, "UNKNOWN", null));
+        };
     }
- //
+
+    //
 }
