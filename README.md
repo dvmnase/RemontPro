@@ -155,6 +155,10 @@ docker run -p 8080:8080 backend
 **GET** (get reviews for service)   `http://localhost:8080/user/reviews/service/{serviceId}`  
 **POST** (add review)   `http://localhost:8080/user/reviews?clientId=1&orderId=7&rating=4&comment=супер`  
 
+#### get photo to order from employee
+**GET** `http://localhost:8080/user/orders/{orderID}/files` 
+
+
 ### EMPLOYEE
 #### SEARCH SERVICES (Require Bearer Token)
 **GET** (get orders)   `http://localhost:8080/employee/orders/{employeeId}`  
