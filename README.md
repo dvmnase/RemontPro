@@ -161,4 +161,4 @@ docker run -p 8080:8080 backend
 **PUT** (update the order status)   `http://localhost:8080/employee/orders/{orderId}/status?status=IN_PROGRESS`   
 **POST** (add the photo to order)   `http://localhost:8080/employee/orders/{orderId}/files`
 BODY - FORM-DATA - key(file) type(file)
-**GET** (get orders)   `http://localhost:8080/employee`  
+
