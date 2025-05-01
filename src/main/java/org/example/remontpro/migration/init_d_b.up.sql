@@ -45,14 +45,13 @@ CREATE TABLE IF NOT EXISTS orders (
     FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE SET NULL
     );
 
-CREATE TABLE IF NOT EXISTS order_files (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    order_id BIGINT NOT NULL,
-    file_path VARCHAR(500) NOT NULL,
-    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
-    );
-
+CREATE TABLE order_files (
+                        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                             order_id BIGINT NOT NULL,
+                             file_data LONGBLOB NOT NULL,
+                             uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                             FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
 CREATE TABLE IF NOT EXISTS reviews (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     client_id BIGINT NOT NULL,
