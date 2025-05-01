@@ -4,6 +4,7 @@ package org.example.remontpro.controllers;
 import lombok.RequiredArgsConstructor;
 import org.example.remontpro.dto.EmployeeDto;
 import org.example.remontpro.dto.OrderDetailsDto;
+import org.example.remontpro.dto.OrderFileDto;
 import org.example.remontpro.entities.Employee;
 import org.example.remontpro.entities.Order;
 import org.example.remontpro.requests.CreateOrderRequest;
@@ -55,4 +56,10 @@ public class UserOrderController {
         orderService.cancelOrder(orderId, clientId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{orderId}/files")
+    public ResponseEntity<List<OrderFileDto>> getOrderFiles(@PathVariable Long orderId) {
+        return ResponseEntity.ok(orderService.getOrderFilesByOrderId(orderId));
+    }
+
 }
