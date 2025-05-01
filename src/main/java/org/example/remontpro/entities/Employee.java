@@ -58,10 +58,13 @@ public class Employee {
         this.phoneNumber = phoneNumber;
     }
 
+    @Column(name = "full_name", nullable = false)
     private String fullName;
 
+    @Column(name = "qualification")
     private String qualification;
 
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     public List<Order> getOrders() {

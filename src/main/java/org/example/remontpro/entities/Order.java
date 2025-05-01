@@ -25,6 +25,8 @@ public class Order {
     @Column(name = "service_id", nullable = false)
     private Long serviceId;
 
+
+
     public Long getId() {
         return id;
     }
@@ -113,4 +115,5 @@ public class Order {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
 }
