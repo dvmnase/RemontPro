@@ -4,17 +4,17 @@ package org.example.remontpro.services;
 import lombok.RequiredArgsConstructor;
 import org.example.remontpro.dto.EmployeeDto;
 import org.example.remontpro.dto.OrderDetailsDto;
+import org.example.remontpro.dto.OrderFileDto;
 import org.example.remontpro.entities.Employee;
 import org.example.remontpro.entities.Order;
+import org.example.remontpro.entities.OrderFile;
 import org.example.remontpro.entities.ServiceEntity;
 import org.example.remontpro.exceptions.BadRequestException;
 import org.example.remontpro.exceptions.ResourceNotFoundException;
 import org.example.remontpro.models.OrderStatus;
-import org.example.remontpro.repositories.ClientRepository;
-import org.example.remontpro.repositories.EmployeeRepository;
-import org.example.remontpro.repositories.OrderRepository;
-import org.example.remontpro.repositories.ServiceRepository;
+import org.example.remontpro.repositories.*;
 import org.example.remontpro.requests.CreateOrderRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,12 +27,14 @@ public class OrderService {
     private final EmployeeRepository employeeRepository;
     private final ServiceRepository serviceRepository;
     private final ClientRepository clientRepository;
+    private final OrderFileRepository orderFileRepository;
 
-    public OrderService(OrderRepository orderRepository, EmployeeRepository employeeRepository,ServiceRepository serviceRepository, ClientRepository clientRepository) {
+    public OrderService(OrderRepository orderRepository, EmployeeRepository employeeRepository,ServiceRepository serviceRepository, ClientRepository clientRepository, OrderFileRepository orderFileRepository) {
         this.orderRepository = orderRepository;
         this.employeeRepository = employeeRepository;
         this.serviceRepository = serviceRepository;
         this.clientRepository = clientRepository;
+        this.orderFileRepository = orderFileRepository;
     }
 
     public List<OrderDetailsDto> getOrderHistory(Long clientId) {
@@ -92,6 +94,18 @@ public class OrderService {
         dto.setDescription(order.getDescription());
         dto.setCreatedAt(order.getCreatedAt());
         return dto;
+    }
+
+
+    public List<OrderFileDto> getOrderFilesByOrderId(Long orderId) {
+        List<OrderFile> files = orderFileRepository.findByOrderId(orderId);
+        return files.stream().map(file -> {
+            OrderFileDto dto = new OrderFileDto();
+            dto.setId(file.getId());
+            dto.setUploadedAt(file.getUploadedAt());
+            dto.setFileData(file.getFileData());
+            return dto;
+        }).toList();
     }
 
     public List<EmployeeDto> getAllEmployeesShort() {

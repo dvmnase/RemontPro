@@ -78,24 +78,27 @@ public class EmployeeOrderController {
                                              @RequestParam("file") MultipartFile file,
                                              Authentication authentication) {
         Optional<Order> orderOpt = orderRepository.findById(orderId);
-        if (orderOpt.isEmpty()) return ResponseEntity.notFound().build();
+        if (orderOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found");
+        }
 
         Order order = orderOpt.get();
         if (!isOrderOwnedByAuthenticatedEmployee(order, authentication)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
         }
 
         try {
             OrderFile orderFile = new OrderFile();
             orderFile.setOrder(order);
-            orderFile.setFileData(file.getBytes());
+            orderFile.setFileData(file.getBytes());  // <-- сохраняем файл как binary
             orderFileRepository.save(orderFile);
 
             return ResponseEntity.ok("File uploaded to DB as binary");
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to read file");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to read file: " + e.getMessage());
         }
     }
+
 
     private boolean isOrderOwnedByAuthenticatedEmployee(Order order, Authentication authentication) {
         if (order.getEmployee() == null) {
