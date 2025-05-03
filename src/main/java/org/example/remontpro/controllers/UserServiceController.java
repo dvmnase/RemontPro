@@ -1,7 +1,7 @@
 package org.example.remontpro.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.example.remontpro.entities.ServiceEntity;
+import org.example.remontpro.dto.ServiceResponseDTO;
 import org.example.remontpro.exceptions.ResourceNotFoundException;
 import org.example.remontpro.services.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,28 +24,25 @@ public class UserServiceController {
 
     // 1. Получить все услуги
     @GetMapping
-    public ResponseEntity<List<ServiceEntity>> getAllServices() {
+    public ResponseEntity<List<ServiceResponseDTO>> getAllServices() {
         return ResponseEntity.ok(userServiceService.getAllServices());
     }
 
     // 2. Получить услугу по ID
     @GetMapping("/{id}")
-    public ResponseEntity<ServiceEntity> getServiceById(@PathVariable Long id) {
-        ServiceEntity service = userServiceService.getServiceById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Service not found with id: " + id));
-        return ResponseEntity.ok(service);
+    public ResponseEntity<ServiceResponseDTO> getServiceById(@PathVariable Long id) {
+        return ResponseEntity.ok(userServiceService.getServiceById(id));
     }
-
 
     // 3. Поиск по названию
     @GetMapping("/search")
-    public ResponseEntity<List<ServiceEntity>> searchServices(@RequestParam String query) {
+    public ResponseEntity<List<ServiceResponseDTO>> searchServices(@RequestParam String query) {
         return ResponseEntity.ok(userServiceService.searchServices(query));
     }
 
     // 4. Фильтрация по цене
     @GetMapping("/filter")
-    public ResponseEntity<List<ServiceEntity>> filterServices(@RequestParam BigDecimal maxPrice) {
+    public ResponseEntity<List<ServiceResponseDTO>> filterServices(@RequestParam BigDecimal maxPrice) {
         return ResponseEntity.ok(userServiceService.filterByMaxPrice(maxPrice));
     }
 }

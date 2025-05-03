@@ -1,13 +1,16 @@
 package org.example.remontpro.controllers;
 
-import org.example.remontpro.entities.ServiceEntity;
+import org.example.remontpro.dto.ServiceRequestDTO;
+import org.example.remontpro.dto.ServiceResponseDTO;
 import org.example.remontpro.exceptions.ResourceNotFoundException;
 import org.example.remontpro.services.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -21,30 +24,35 @@ public class AdminServiceController {
         this.serviceService = serviceService;
     }
 
-    // Получить все услуги
     @GetMapping
-    public List<ServiceEntity> getAllServices() {
+    public List<ServiceResponseDTO> getAllServices() {
         return serviceService.getAllServices();
     }
 
-    // Получить услугу по ID
     @GetMapping("/{id}")
-    public ResponseEntity<ServiceEntity> getServiceById(@PathVariable Long id) {
-        ServiceEntity service = serviceService.getServiceById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Service not found with id: " + id));
-        return ResponseEntity.ok(service);
+    public ResponseEntity<ServiceResponseDTO> getServiceById(@PathVariable Long id) {
+        return ResponseEntity.ok(serviceService.getServiceById(id));
     }
 
-
-    // Создать новую услугу
     @PostMapping
-    public ServiceEntity createService(@RequestBody ServiceEntity serviceEntity) {
-        return serviceService.createService(serviceEntity);
+    public ResponseEntity<ServiceResponseDTO> createService(
+            @RequestPart("service") ServiceRequestDTO dto,
+            @RequestPart(value = "photo", required = false) MultipartFile photo) throws IOException {
+        if (photo != null) {
+            dto.setPhoto(photo);
+        }
+        return ResponseEntity.ok(serviceService.createService(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ServiceEntity> updateService(@PathVariable Long id, @RequestBody ServiceEntity serviceEntity) {
-        return ResponseEntity.ok(serviceService.updateService(id, serviceEntity));
+    public ResponseEntity<ServiceResponseDTO> updateService(
+            @PathVariable Long id,
+            @RequestPart("service") ServiceRequestDTO dto,
+            @RequestPart(value = "photo", required = false) MultipartFile photo) throws IOException {
+        if (photo != null) {
+            dto.setPhoto(photo);
+        }
+        return ResponseEntity.ok(serviceService.updateService(id, dto));
     }
 
     @DeleteMapping("/{id}")

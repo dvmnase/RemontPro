@@ -67,4 +67,14 @@ public class EmployeeResponseDTO {
     private String qualification;
     private String phoneNumber;
     private String role;
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
+
+    private byte[] photo;
 }

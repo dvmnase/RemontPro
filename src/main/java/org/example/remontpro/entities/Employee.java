@@ -78,4 +78,16 @@ public class Employee {
     @OneToMany(mappedBy = "employee")
     private List<Order> orders;
 
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
+
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] photo;
+
 }

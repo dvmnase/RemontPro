@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,7 @@ public class EmployeeService {
         dto.setQualification(employee.getQualification());
         dto.setPhoneNumber(employee.getPhoneNumber());
         dto.setRole(employee.getUser().getRole().name());
+        dto.setPhoto(employee.getPhoto());
         return dto;
     }
 
@@ -51,7 +53,7 @@ public class EmployeeService {
         return convertToDto(employee);
     }
 
-    public Employee createEmployee(EmployeeRequestDTO dto) {
+    public EmployeeResponseDTO createEmployee(EmployeeRequestDTO dto) throws IOException {
         // 1. Создаем пользователя
         User user = new User();
         user.setUsername(dto.getUsername());
@@ -67,8 +69,14 @@ public class EmployeeService {
         employee.setQualification(dto.getQualification());
         employee.setPhoneNumber(dto.getPhoneNumber());
 
-        return employeeRepository.save(employee);
+        if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
+            employee.setPhoto(dto.getPhoto().getBytes());
+        }
+
+        Employee savedEmployee = employeeRepository.save(employee);
+        return convertToDto(savedEmployee);
     }
+
 
     public EmployeeResponseDTO updateEmployee(Long id, EmployeeRequestDTO dto) {
         Employee employee = employeeRepository.findById(id)
@@ -78,6 +86,13 @@ public class EmployeeService {
         employee.setFullName(dto.getFullName());
         employee.setQualification(dto.getQualification());
         employee.setPhoneNumber(dto.getPhoneNumber());
+        if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
+            try {
+                employee.setPhoto(dto.getPhoto().getBytes());
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to process employee photo", e);
+            }
+        }
         employee = employeeRepository.save(employee);
 
         // Обновляем данные пользователя (если нужно)

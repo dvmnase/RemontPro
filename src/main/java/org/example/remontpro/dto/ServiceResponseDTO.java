@@ -1,12 +1,8 @@
-package org.example.remontpro.entities;
+package org.example.remontpro.dto;
 
-import jakarta.persistence.*;
-import lombok.Data;
+public class ServiceResponseDTO {
+    private Long id;
 
-@Entity
-@Table(name = "services")
-@Data
-public class ServiceEntity {
     public Long getId() {
         return id;
     }
@@ -31,26 +27,13 @@ public class ServiceEntity {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(double price) {
         this.price = price;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
-    @Column(nullable = false)
-    private Double price;
 
     public byte[] getPhoto() {
         return photo;
@@ -60,7 +43,8 @@ public class ServiceEntity {
         this.photo = photo;
     }
 
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
+    private String name;
+    private String description;
+    private double price;
     private byte[] photo;
 }
