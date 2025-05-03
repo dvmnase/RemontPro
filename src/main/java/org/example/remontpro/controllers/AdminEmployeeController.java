@@ -2,16 +2,16 @@ package org.example.remontpro.controllers;
 
 import org.example.remontpro.dto.EmployeeRequestDTO;
 import org.example.remontpro.dto.EmployeeResponseDTO;
-import org.example.remontpro.entities.Employee;
 import org.example.remontpro.exceptions.ResourceNotFoundException;
 import org.example.remontpro.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
-
 @RestController
 @RequestMapping("/secured/admin/employees")
 @Secured("ROLE_ADMIN")
@@ -31,12 +31,23 @@ public class AdminEmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<Employee> createEmployee(@RequestBody EmployeeRequestDTO dto) {
+    public ResponseEntity<EmployeeResponseDTO> createEmployee(
+            @RequestPart("employee") EmployeeRequestDTO dto,
+            @RequestPart(value = "photo", required = false) MultipartFile photo) throws IOException {
+        if (photo != null) {
+            dto.setPhoto(photo);
+        }
         return ResponseEntity.ok(employeeService.createEmployee(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeResponseDTO> updateEmployee(@PathVariable Long id, @RequestBody EmployeeRequestDTO dto) {
+    public ResponseEntity<EmployeeResponseDTO> updateEmployee(
+            @PathVariable Long id,
+            @RequestPart("employee") EmployeeRequestDTO dto,
+            @RequestPart(value = "photo", required = false) MultipartFile photo) throws IOException {
+        if (photo != null) {
+            dto.setPhoto(photo);
+        }
         return ResponseEntity.ok(employeeService.updateEmployee(id, dto));
     }
 

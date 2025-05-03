@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS employees (
     full_name VARCHAR(255) NOT NULL,
     qualification VARCHAR(255),
     phone_number VARCHAR(20),
+    photo LONGBLOB,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
@@ -28,7 +29,8 @@ CREATE TABLE IF NOT EXISTS services (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    price DECIMAL(10, 2) NOT NULL
+    price DECIMAL(10, 2) NOT NULL,
+    photo LONGBLOB
     );
 
 CREATE TABLE IF NOT EXISTS orders (

@@ -1,6 +1,7 @@
 package org.example.remontpro.dto;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class EmployeeRequestDTO {
@@ -61,4 +62,14 @@ public class EmployeeRequestDTO {
     private String fullName;
     private String qualification;
     private String phoneNumber;
+
+    public MultipartFile getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(MultipartFile photo) {
+        this.photo = photo;
+    }
+
+    private MultipartFile photo;
 }
